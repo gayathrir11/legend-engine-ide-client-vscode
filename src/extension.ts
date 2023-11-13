@@ -6,8 +6,6 @@ import { workspace, ExtensionContext, languages } from 'vscode';
 import {
 	LanguageClient,
 	LanguageClientOptions,
-	ServerOptions,
-	TransportKind,
 	Executable
 } from 'vscode-languageclient/node';
 

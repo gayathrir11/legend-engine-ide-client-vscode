@@ -1,50 +1,63 @@
 {
-    "name": "legend-engine-ide-client-vscode",
-    "version": "0.0.1",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/renuccif/legend-engine-ide-client-vscode/"
+  "name": "legend-engine-ide-client-vscode",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finos/legend-engine-ide-client-vscode/"
+  },
+  "type": "module",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Legend Language Config",
+      "properties": {}
     },
-    "engines": {
-        "vscode": "^1.75.0"
-    },
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "Legend Language Config",
-            "properties": {}
-        },
-        "languages": [
-            {
-                "id": "legend",
-                "extensions": [
-                    ".pure"
-                ]
-            }
-        ],
-        "grammars": [
-            {
-                "language": "legend",
-                "scopeName": "source.legend",
-                "path": "./legend.tmlanguage"
-            }
+    "languages": [
+      {
+        "id": "legend",
+        "extensions": [
+          ".pure"
         ]
-},
-    "scripts": {
-        "test": "jest",
-        "compile": "tsc -b"
-    },
-    "dependencies": {
-        "@types/node": "20.8.4",
-        "@types/vscode": "1.83.0",
-        "path": "0.12.7",
-        "typescript": "5.2.2",
-        "vscode-languageclient": "9.0.1",
-        "yo": "^4.3.1"
-    },
-    "main": "out/extension",
-    "activationEvents": [
-        "onLanguage:legend",
-        "workspaceContains:**/*.pure"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "legend",
+        "scopeName": "source.legend",
+        "path": "./legend.tmlanguage"
+      }
     ]
+  },
+  "scripts": {
+    "test": "jest",
+    "compile": "tsc -b",
+    "check:lint": "eslint . --ext .ts --ignore-path .eslintignore",
+    "format": "prettier --write \"**/*.{ts,js,json}\"",
+    "check:format":  "prettier --check \"**/*.{ts,js,json}\""
+  },
+  "dependencies": {
+    "@types/node": "20.8.4",
+    "@types/vscode": "1.83.0",
+    "@typescript-eslint/eslint-plugin": "6.9.1",
+    "eslint-config-standard-with-typescript": "39.1.1",
+    "eslint-plugin-import": "2.29.0",
+    "eslint-plugin-n": "16.2.0",
+    "eslint-plugin-prettier": "5.0.1",
+    "eslint-plugin-promise": "6.1.1",
+    "path": "0.12.7",
+    "typescript": "5.2.2",
+    "vscode-languageclient": "9.0.1",
+    "yo": "^4.3.1",
+    "eslint": "8.52.0",
+    "prettier": "3.0.3",
+    "eslint-config-prettier": "9.0.0"
+  },
+  "main": "out/extension",
+  "activationEvents": [
+    "onLanguage:legend",
+    "workspaceContains:**/*.pure"
+  ]
 }
