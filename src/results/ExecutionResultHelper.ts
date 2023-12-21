@@ -38,8 +38,68 @@ import {
 import { LegendExecutionResultType } from './LegendExecutionResultType';
 import { guaranteeNonNullable } from '../utils/AssertionUtils';
 import type { LegendWebViewProvider } from '../utils/LegendWebViewProvider';
+import type { PlainObject } from '../utils/SerializationUtils';
+import {
+  TDSLegendExecutionResult,
+  type TabularDataSet,
+} from './TDSLegendExecutionResult';
+
+const renderTDSResultMessage = (tds: TabularDataSet): string => {
+  const htmlString = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+          table {
+              border-collapse: collapse;
+              width: 100%;
+              height: 100%;
+          }
+  
+          th, td {
+              border: 1px solid #dddddd;
+              text-align: left;
+              padding: 8px;
+          }
+  
+          th {
+              background-color: #f2f2f2;
+          }
+      </style>
+  </head>
+  <body>
+  <table>
+      <thead>
+      <tr>
+          ${tds.columns.map((c, idx) => `<th key=${idx}>${c}</th>`)}
+          </tr>
+      </thead>
+      <tbody>
+          ${tds.rows.map(
+            (row, idx) =>
+              `<tr key=${idx}> ${row.values.map(
+                (value, id) => `<td key=${id}>${value}</td>`
+              )}</tr>`
+          )}
+          
+      </tbody>
+  </table>
+  
+  </body>
+  </html>
+  `;
+  return htmlString;
+};
 
 const renderResultMessage = (mssg: string): string => {
+  try {
+    const json = JSON.parse(mssg) as PlainObject<TDSLegendExecutionResult>;
+    const result = TDSLegendExecutionResult.serialization.fromJson(json);
+    return renderTDSResultMessage(result.result);
+  } catch (e) {
+    // do nothing
+  }
   const htmlString = `<html><body><div style="white-space: pre-wrap">${mssg}</div></body></html>`;
   return htmlString;
 };

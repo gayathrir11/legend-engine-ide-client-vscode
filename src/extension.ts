@@ -43,6 +43,13 @@ import {
 } from './results/ExecutionResultHelper';
 import { error } from 'console';
 import { isPlainObject } from './utils/AssertionUtils';
+// import {
+//   provideVSCodeDesignSystem,
+//   DataGrid,
+//   vsCodeDataGrid,
+//   vsCodeDataGridCell,
+//   vsCodeDataGridRow,
+// } from '@vscode/webview-ui-toolkit';
 
 let client: LanguageClient;
 
@@ -105,6 +112,39 @@ export function registerClientViews(context: ExtensionContext): void {
     },
   );
   context.subscriptions.push(showResultsCommand);
+
+  // context.register(
+  //   vsCodeDataGrid(),
+  //   vsCodeDataGridCell(),
+  //   vsCodeDataGridRow(),
+  // );
+  // const basicGrid = document.getElementById('basic-grid') as DataGrid;
+  // const stickyGrid = document.getElementById("sticky-grid") as DataGrid;
+  // const customColGrid = document.getElementById("custom-column-grid") as DataGrid;
+  // const customTitleGrid = document.getElementById(
+  //   "custom-title-grid"
+  // ) as DataGrid;
+
+  // basicGrid.rowsData = [
+  //   {
+  //     Header1: 'Cell Data',
+  //     Header2: 'Cell Data',
+  //     Header3: 'Cell Data',
+  //     Header4: 'Cell Data',
+  //   },
+  //   {
+  //     Header1: 'Cell Data',
+  //     Header2: 'Cell Data',
+  //     Header3: 'Cell Data',
+  //     Header4: 'Cell Data',
+  //   },
+  //   {
+  //     Header1: 'Cell Data',
+  //     Header2: 'Cell Data',
+  //     Header3: 'Cell Data',
+  //     Header4: 'Cell Data',
+  //   },
+  // ];
 
   // Listen to progress notifications
   client.onNotification(

@@ -14,31 +14,40 @@
  * limitations under the License.
  */
 
-import { LegendExecutionResult } from './LegendExecutionResult';
+import { createModelSchema, list, primitive } from 'serializr';
 import {
   SerializationFactory,
   usingModelSchema,
 } from '../utils/SerializationUtils';
-import { createModelSchema, custom, list, primitive } from 'serializr';
-// import {
-//   deSerializeLegendExecutionResult,
-//   serializeLegendExecutionResult,
-// } from './LegendExecutionResultSerializationHelper';
 
-export class LanguageClientProgressResult {
-  token?: string | number;
-  value: LegendExecutionResult[] = [];
+export class TDSRow {
+  values: (string | number | boolean | null)[] = [];
 
   static readonly serialization = new SerializationFactory(
-    createModelSchema(LanguageClientProgressResult, {
-      token: primitive(),
-      value: list(usingModelSchema(LegendExecutionResult.serialization.schema)),
-      // value: list(
-      //   custom(
-      //     (val) => serializeLegendExecutionResult(val),
-      //     (val) => deSerializeLegendExecutionResult(val),
-      //   ),
-      // ),
+    createModelSchema(TDSRow, {
+      values: list(primitive()),
+    }),
+  );
+}
+
+export class TabularDataSet {
+  columns: string[] = [];
+  rows: TDSRow[] = [];
+
+  static readonly serialization = new SerializationFactory(
+    createModelSchema(TabularDataSet, {
+      columns: list(primitive()),
+      rows: list(usingModelSchema(TDSRow.serialization.schema)),
+    }),
+  );
+}
+
+export class TDSLegendExecutionResult {
+  result!: TabularDataSet;
+
+  static readonly serialization = new SerializationFactory(
+    createModelSchema(TDSLegendExecutionResult, {
+      result: usingModelSchema(TabularDataSet.serialization.schema),
     }),
   );
 }
