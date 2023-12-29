@@ -43,11 +43,12 @@ import {
   TDSLegendExecutionResult,
   type TabularDataSet,
 } from './TDSLegendExecutionResult';
+import path = require('path');
 
-const link1 = 'https://unpkg.com/ag-grid-community/styles/ag-grid.css';
-const link2 = 'https://unpkg.com/ag-grid-community/styles/ag-theme-alpine.css';
-const link3 = 'https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js';
-const link4 = 'https://unpkg.com/ag-grid-react';
+// const link1 = 'https://unpkg.com/ag-grid-community/styles/ag-grid.css';
+// const link2 = 'https://unpkg.com/ag-grid-community/styles/ag-theme-alpine.css';
+// const link3 = 'https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js';
+// const link4 = 'https://unpkg.com/ag-grid-react';
 
 const renderTDSResultMessage = (
   tds: TabularDataSet,
@@ -55,23 +56,27 @@ const renderTDSResultMessage = (
   webview: Webview,
 ): string => {
   try {
-    // const link1 = `${link}/media/link1.css`;
-    // const link2 = `${link}/media/link2.css`;
-    // const link3 = `${link}/media/link3.js`;
-    // const link4 = `${link}/media/link4.js`;
+    // const link1 = `${link}/node_modules/ag-grid-community/styles/ag-grid.css`;
+    // const link2 = `${link}/node_modules/ag-grid-community/styles/ag-theme-alpine.css`;
+    // const link3 = `${link}/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js`;
+    // const link4 = `${link}/node_modules/ag-grid-react/lib/main.js`;
+    const link1 = Uri.joinPath(link, 'node_modules', 'ag-grid-community', 'styles', 'ag-grid.css');
+    const link2 = Uri.joinPath(link, 'node_modules', 'ag-grid-community', 'styles', 'ag-theme-alpine.css');
+    const link3 = Uri.joinPath(link, 'node_modules', 'ag-grid-community', 'dist', 'ag-grid-community.min.noStyle.js');
+    const link4 = Uri.joinPath(link, 'node_modules', 'ag-grid-react', 'lib', 'main.js');
     const htmlString = `<!DOCTYPE html>
   <html lang="en">
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="${link1}">
-      <link rel="stylesheet" href="${link2}">
+      <link rel="stylesheet" href="${webview.asWebviewUri(link1)}">
+      <link rel="stylesheet" href="${webview.asWebviewUri(link2)}">
   </head>
   <body>
       <div id="agGrid" style="height: 500px; width: 100%;" class="ag-theme-alpine"></div>
       <h2>${link1}</h2>
-      <script src="${link3}"></script>
-      <script src="${link4}"></script>
+      <script src="${webview.asWebviewUri(link3)}"></script>
+      <script src="${webview.asWebviewUri(link4)}"></script>
   
       <script>
           // Your AG-Grid setup code goes here
@@ -161,12 +166,13 @@ const getResultIconColor = (resultType: LegendExecutionResultType): string => {
 export const resetExecutionTab = (
   resultsTreeDataProvider: LegendTreeDataProvider,
   resultsViewprovider: LegendWebViewProvider,
+  root: Uri,
 ): void => {
   showResults();
   resultsTreeDataProvider.resetTreeData();
   resultsTreeDataProvider.refresh();
   showExecutionProgress(true);
-  resultsViewprovider.updateView('');
+  resultsViewprovider.updateView('', root);
 };
 
 export const renderTestResults = (

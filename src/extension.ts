@@ -101,7 +101,7 @@ export function registerClientViews(context: ExtensionContext): void {
   const showResultsCommand = commands.registerCommand(
     SHOW_RESULTS_COMMAND_ID,
     (errorMssg: string) => {
-      resultsViewprovider.updateView(errorMssg);
+      resultsViewprovider.updateView(errorMssg, context.extensionUri);
     },
   );
   context.subscriptions.push(showResultsCommand);
@@ -115,7 +115,11 @@ export function registerClientViews(context: ExtensionContext): void {
           isPlainObject(objectResult.value) &&
           objectResult.value.kind !== 'end'
         ) {
-          resetExecutionTab(resultsTreeDataProvider, resultsViewprovider);
+          resetExecutionTab(
+            resultsTreeDataProvider,
+            resultsViewprovider,
+            context.extensionUri,
+          );
         }
         const result =
           LanguageClientProgressResult.serialization.fromJson(objectResult);

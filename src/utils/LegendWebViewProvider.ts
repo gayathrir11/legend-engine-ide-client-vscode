@@ -16,6 +16,7 @@
 
 import type {
   CancellationToken,
+  Uri,
   Webview,
   WebviewView,
   WebviewViewProvider,
@@ -38,8 +39,12 @@ export class LegendWebViewProvider implements WebviewViewProvider {
     this.token = token;
   }
 
-  updateView(html: string): void {
+  updateView(html: string, root: Uri): void {
     this.view.webview.html = html;
+    this.view.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [root],
+    };
   }
 
   getWebView(): Webview {
