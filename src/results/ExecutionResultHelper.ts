@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ThemeColor, ThemeIcon, commands } from 'vscode';
+import { ThemeColor, ThemeIcon, Uri, Webview, commands } from 'vscode';
 import {
   SET_CONTEXT_COMMAND_ID,
   SHOW_RESULTS_COMMAND_ID,
@@ -44,64 +44,80 @@ import {
   type TabularDataSet,
 } from './TDSLegendExecutionResult';
 
-const renderTDSResultMessage = (tds: TabularDataSet): string => {
-  const htmlString = `<!DOCTYPE html>
+const link1 = 'https://unpkg.com/ag-grid-community/styles/ag-grid.css';
+const link2 = 'https://unpkg.com/ag-grid-community/styles/ag-theme-alpine.css';
+const link3 = 'https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js';
+const link4 = 'https://unpkg.com/ag-grid-react';
+
+const renderTDSResultMessage = (
+  tds: TabularDataSet,
+  link: Uri,
+  webview: Webview,
+): string => {
+  try {
+    // const link1 = `${link}/media/link1.css`;
+    // const link2 = `${link}/media/link2.css`;
+    // const link3 = `${link}/media/link3.js`;
+    // const link4 = `${link}/media/link4.js`;
+    const htmlString = `<!DOCTYPE html>
   <html lang="en">
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-          table {
-              border-collapse: collapse;
-              width: 100%;
-              height: 100%;
-          }
-  
-          th, td {
-              border: 1px solid #dddddd;
-              text-align: left;
-              padding: 8px;
-          }
-  
-          th {
-              background-color: #f2f2f2;
-          }
-      </style>
+      <link rel="stylesheet" href="${link1}">
+      <link rel="stylesheet" href="${link2}">
   </head>
   <body>
-  <table>
-      <thead>
-      <tr>
-          ${tds.columns.map((c, idx) => `<th key=${idx}>${c}</th>`)}
-          </tr>
-      </thead>
-      <tbody>
-          ${tds.rows.map(
-            (row, idx) =>
-              `<tr key=${idx}> ${row.values.map(
-                (value, id) => `<td key=${id}>${value}</td>`
-              )}</tr>`
-          )}
-          
-      </tbody>
-  </table>
+      <div id="agGrid" style="height: 500px; width: 100%;" class="ag-theme-alpine"></div>
+      <h2>${link1}</h2>
+      <script src="${link3}"></script>
+      <script src="${link4}"></script>
   
+      <script>
+          // Your AG-Grid setup code goes here
+          var gridOptions = {
+              columnDefs: [
+                  { headerName: "Make", field: "make" },
+                  { headerName: "Model", field: "model" },
+                  { headerName: "Price", field: "price" },
+              ],
+              rowData: [
+                  { make: "Toyota", model: "Celica", price: 35000 },
+                  { make: "Ford", model: "Mondeo", price: 32000 },
+                  { make: "Porsche", model: "Boxster", price: 72000 },
+              ],
+          };
+  
+          // Specify the grid container element
+          var gridDiv = document.querySelector('#agGrid');
+  
+          // Create the AG-Grid
+          new agGrid.Grid(gridDiv, gridOptions);
+      </script>
   </body>
   </html>
+  
   `;
-  return htmlString;
+    return htmlString;
+  } catch (e) {
+    return e instanceof Error ? e.message : 'Hello world';
+  }
 };
 
-const renderResultMessage = (mssg: string): string => {
+const renderResultMessage = (
+  mssg: string,
+  link: Uri,
+  webview: Webview,
+): string => {
   try {
     const json = JSON.parse(mssg) as PlainObject<TDSLegendExecutionResult>;
     const result = TDSLegendExecutionResult.serialization.fromJson(json);
-    return renderTDSResultMessage(result.result);
+    return renderTDSResultMessage(result.result, link, webview);
   } catch (e) {
-    // do nothing
+    return e instanceof Error ? e.message : 'Hello world2';
   }
-  const htmlString = `<html><body><div style="white-space: pre-wrap">${mssg}</div></body></html>`;
-  return htmlString;
+  // const htmlString = `<html><body><div style="white-space: pre-wrap">${mssg}</div></body></html>`;
+  // return htmlString;
 };
 
 const showResults = (): void => {
@@ -156,6 +172,8 @@ export const resetExecutionTab = (
 export const renderTestResults = (
   result: LanguageClientProgressResult,
   resultsTreeDataProvider: LegendTreeDataProvider,
+  uri: Uri,
+  webview: Webview,
 ): void => {
   showExecutionProgress(false);
   resultsTreeDataProvider.resetTreeData();
@@ -166,7 +184,7 @@ export const renderTestResults = (
     const viewResultCommand = {
       title: SHOW_RESULTS_COMMAND_TITLE,
       command: SHOW_RESULTS_COMMAND_ID,
-      arguments: [renderResultMessage(r.message)],
+      arguments: [renderResultMessage(r.message, uri, webview)],
     };
     if (r.ids.length === 2) {
       const testId = guaranteeNonNullable(r.ids[1]);
