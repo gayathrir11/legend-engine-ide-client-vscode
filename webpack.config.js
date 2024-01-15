@@ -1,10 +1,13 @@
-// webpack.config.js
 const path = require('path');
 
 module.exports = {
-  entry: './src/webview.tsx',
+  entry: {
+    webview: './src/webview.tsx',
+    temp: './src/temp.tsx',
+    // Add more entry points as needed
+  },
   output: {
-    filename: 'webview.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'lib'),
   },
   module: {
@@ -12,7 +15,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        // exclude: /node_modules/,
+        exclude: /node_modules/,
       },
     ],
   },
