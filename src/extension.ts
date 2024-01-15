@@ -21,11 +21,14 @@ import {
   languages,
   window,
   commands,
+  ViewColumn,
+  Uri,
 } from 'vscode';
 import {
   LanguageClient,
   type LanguageClientOptions,
   type Executable,
+  type ServerOptions,
 } from 'vscode-languageclient/node';
 import { LegendTreeDataProvider } from './utils/LegendTreeProvider';
 import { LanguageClientProgressResult } from './results/LanguageClientProgressResult';
@@ -35,6 +38,8 @@ import {
   RESULTS_WEB_VIEW,
   SHOW_RESULTS_COMMAND_ID,
   EXECUTION_TREE_VIEW,
+  EXEC_FUNCTION_WITH_PARAMETERS_ID,
+  LEGEND_COMMAND_WITH_INPUTS_ID,
 } from './utils/Const';
 import { LegendWebViewProvider } from './utils/LegendWebViewProvider';
 import {
@@ -43,6 +48,8 @@ import {
 } from './results/ExecutionResultHelper';
 import { error } from 'console';
 import { isPlainObject } from './utils/AssertionUtils';
+import { Variable } from './model/VariableExpression';
+import ReactDOM = require('react-dom');
 
 let client: LanguageClient;
 
@@ -57,7 +64,15 @@ export function createClient(context: ExtensionContext): LanguageClient {
     },
   });
 
-  const serverOptions: Executable = {
+  // const serverOptions: Executable = {
+  //   command: 'java',
+  //   args: [
+  //     '-jar',
+  //     context.asAbsolutePath(path.join('jars', 'language-server.jar')),
+  //   ],
+  // };
+
+  const serverOptionsRun: Executable = {
     command: 'java',
     args: [
       '-jar',
@@ -65,19 +80,76 @@ export function createClient(context: ExtensionContext): LanguageClient {
     ],
   };
 
-  /*	const serverOptions: ServerOptions = {
-		run:   { module: serverModule, transport: TransportKind.ipc },
-		debug: { module: serverModule, transport: TransportKind.ipc }
-	};*/
+  const serverOptionsDebug: Executable = {
+    command: 'java',
+    args: [
+      '-agentlib:jdwp=transport=dt_socket,server=y,quiet=y,suspend=y,address=*:11285',
+      '-jar',
+      context.asAbsolutePath(path.join('jars', 'language-server.jar')),
+    ],
+  };
+
+  const serverOptions: ServerOptions = {
+    run: serverOptionsRun,
+    debug: serverOptionsDebug,
+  };
 
   const clientOptions: LanguageClientOptions = {
     documentSelector: [{ scheme: 'file', language: 'legend' }],
     synchronize: { fileEvents: workspace.createFileSystemWatcher('**/*.pure') },
   };
+
   client = new LanguageClient('Legend', 'Legend', serverOptions, clientOptions);
   // Initialize client
   client.start();
   return client;
+}
+
+export function registerComamnds(context: ExtensionContext): void {
+  const executeFunctionWithParametersCommand = commands.registerCommand(
+    LEGEND_COMMAND_WITH_INPUTS_ID,
+    async (...args: unknown[]) => {
+      console.log(args);
+      const commandId = args[3] as string;
+      if (commandId === EXEC_FUNCTION_WITH_PARAMETERS_ID) {
+        const rawParams = args[5] as Map<string, Variable>;
+        // const params =
+        const userInput = window.createWebviewPanel(
+          'Function',
+          'Function inputs',
+          ViewColumn.One,
+          {
+            enableScripts: true,
+          },
+        );
+        const webviewHtmlPath = Uri.file(
+          path.join(context.extensionPath, 'src', 'index.html'),
+        );
+        const webviewScriptPath = Uri.file(
+          path.join(context.extensionPath, 'lib', 'webview.js'),
+        );
+
+        const webviewHtml = userInput.webview.asWebviewUri(webviewHtmlPath);
+        const webviewScript = userInput.webview.asWebviewUri(webviewScriptPath);
+
+        userInput.webview.html = `<!-- webview/index.html -->
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>React Webview</title>
+        </head>
+        <body>
+          <div id="root"></div>
+          <script src=${webviewScript}></script>
+        </body>
+        </html>
+        `;
+      }
+    },
+  );
+  context.subscriptions.push(executeFunctionWithParametersCommand);
 }
 
 export function registerClientViews(context: ExtensionContext): void {
@@ -131,6 +203,7 @@ export function registerClientViews(context: ExtensionContext): void {
 
 export function activate(context: ExtensionContext): void {
   createClient(context);
+  registerComamnds(context);
   registerClientViews(context);
 }
 

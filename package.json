@@ -1,5 +1,5 @@
 {
-  "name": "@finos/legend-engine-ide-client-vscode",
+  "name": "legend-engine-ide-client-vscode",
   "version": "0.0.2",
   "type": "commonjs",
   "repository": {
@@ -48,6 +48,10 @@
       {
         "command": "showResults",
         "title": "Results"
+      },
+      {
+        "command": "legend.pure.executeFunctionWithParameters",
+        "title": "Execute Function"
       }
     ],
     "configuration": {
@@ -93,33 +97,44 @@
     "lint:js": "cross-env eslint --cache --cache-location ./build/.eslintcache --report-unused-disable-directives --parser-options=project:\"./tsconfig.json\" \"./src/**/*.{js,ts,tsx}\"",
     "lint:style": "stylelint --cache --cache-location ./build/.stylelintcache \"style/**/*.{scss,css}\" \"style/scss/**/*.scss\"",
     "fix:format": "prettier --write \"(scripts|docs)/**/*.{md,json,mjs,cjs,js,ts,tsx,html,scss,css}\" \"src/**/*.{md,json,mjs,cjs,js,ts,tsx,html,scss,css}\"",
-    "release": "npm publish"
+    "release": "npm publish",
+    "build": "react-scripts build --entry src/webview.tsx --no-minify"
   },
   "dependencies": {
     "@types/node": "20.8.4",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
     "@types/vscode": "1.83.0",
-    "path": "0.12.7",
-    "typescript": "5.2.2",
-    "vscode-languageclient": "9.0.1",
-    "yo": "^4.3.1",
-    "eslint": "8.52.0",
-    "prettier": "3.0.3",
-    "stylelint": "15.11.0",
-    "postcss": "8.4.31",
-    "postcss-scss": "4.0.9",
-    "stylelint-config-standard": "34.0.0",
-    "stylelint-scss": "5.2.1",
     "@typescript-eslint/eslint-plugin": "6.9.0",
     "@typescript-eslint/parser": "6.9.0",
+    "cross-env": "7.0.3",
+    "eslint": "8.52.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-import": "2.29.0",
     "eslint-plugin-prettier": "5.0.1",
-    "cross-env": "7.0.3",
-    "serializr": "3.0.2"
+    "path": "0.12.7",
+    "postcss": "8.4.31",
+    "postcss-scss": "4.0.9",
+    "prettier": "3.0.3",
+    "react": "18.2.0",
+    "react-dom": "^18.2.0",
+    "serializr": "3.0.2",
+    "stylelint": "15.11.0",
+    "stylelint-config-standard": "34.0.0",
+    "stylelint-scss": "5.2.1",
+    "typescript": "5.2.2",
+    "vscode-languageclient": "9.0.1",
+    "yo": "^4.3.1"
   },
   "main": "lib/extension",
   "activationEvents": [
     "onLanguage:legend",
     "workspaceContains:**/*.pure"
-  ]
+  ],
+  "devDependencies": {
+    "@types/react": "^18.2.46",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
 }

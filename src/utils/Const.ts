@@ -32,6 +32,8 @@ export const TEST_ERROR_COLOR = 'testing.iconErrored';
 export const SHOW_RESULTS_COMMAND_ID = 'showResults';
 export const SHOW_RESULTS_COMMAND_TITLE = 'Results';
 export const SET_CONTEXT_COMMAND_ID = 'setContext';
+export const LEGEND_COMMAND_WITH_INPUTS_ID = 'legend.command.withInputs';
+export const EXEC_FUNCTION_WITH_PARAMETERS_ID = 'legend.pure.executeFunctionWithParameters';
 
 // Context variables
 export const SHOW_EXECUTION_RESULTS = 'showExecutionResults';
