@@ -3,7 +3,6 @@ const path = require('path');
 module.exports = {
   entry: {
     webview: './src/webview.tsx',
-    temp: './src/temp.tsx',
     // Add more entry points as needed
   },
   output: {
@@ -17,9 +16,23 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      // Allow importing CSS modules:
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx', 'css'],
   },
 };

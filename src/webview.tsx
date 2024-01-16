@@ -1,6 +1,6 @@
 // webview/webview.tsx
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { HelloWorld } from './renderer';
+import { PrimitiveEditor } from './components/PrimitiveTypeEditor';
 
-ReactDOM.render(<HelloWorld />, document.getElementById('root'));
+ReactDOM.render(<PrimitiveEditor />, document.getElementById('root'));
