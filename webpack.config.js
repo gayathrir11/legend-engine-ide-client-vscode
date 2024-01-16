@@ -2,12 +2,15 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    webview: './src/webview.tsx',
+    ParametersEditorRenderer: './src/components/ParametersEditorRenderer.tsx',
     // Add more entry points as needed
+  },
+  externals: {
+    vscode: 'commonjs vscode',
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'lib'),
+    path: path.resolve(__dirname, 'lib', 'components'),
   },
   module: {
     rules: [
@@ -33,6 +36,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.jsx', 'css'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx', '.css'],
   },
 };

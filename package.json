@@ -98,7 +98,7 @@
     "lint:style": "stylelint --cache --cache-location ./build/.stylelintcache \"style/**/*.{scss,css}\" \"style/scss/**/*.scss\"",
     "fix:format": "prettier --write \"(scripts|docs)/**/*.{md,json,mjs,cjs,js,ts,tsx,html,scss,css}\" \"src/**/*.{md,json,mjs,cjs,js,ts,tsx,html,scss,css}\"",
     "release": "npm publish",
-    "build": "react-scripts build --entry src/webview.tsx --no-minify"
+    "package": "tsc npx webpack --mode=development vsce package -o legend-engine-ide-client-vscode-0.0.1.vsix"
   },
   "dependencies": {
     "@types/node": "20.8.4",

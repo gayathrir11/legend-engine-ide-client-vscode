@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../../style/index.css';
+import { PRIMITIVE_TYPE } from '../utils/Const';
 
 export const BooleanPrimitiveTypeEditor: React.FC<{
   value: boolean;
@@ -75,46 +76,51 @@ export const DateTimePrimitiveTypeEditor: React.FC<{
   </div>
 );
 
-export const PrimitiveEditor: React.FC<object> = () => {
-  const [b, setB] = React.useState(false);
-  const [s, setS] = React.useState('string');
-  const [n, setN] = React.useState(0);
-  const [d, setD] = React.useState('12-11-2021');
-  const [t, setT] = React.useState('12-11-2021');
-  return (
-    <div className="temp">
-      <div>
-        <BooleanPrimitiveTypeEditor value={b} onChange={(): void => setB(!b)} />
-        <div>Boolean</div>
-      </div>
-      <div>
-        <div>String</div>
+export const PrimitiveTypeEditor: React.FC<{
+  type: string;
+  value: unknown;
+  onChange: (val: unknown) => void;
+}> = ({ type, value, onChange }) => {
+  switch (type) {
+    case PRIMITIVE_TYPE.STRING:
+      return (
         <StringPrimitiveTypeEditor
-          value={s}
-          onChange={(val: string): void => setS(val)}
+          value={value as string}
+          onChange={onChange}
         />
-      </div>
-      <div>
-        <div>Number</div>
+      );
+    case PRIMITIVE_TYPE.BOOLEAN:
+      return (
+        <BooleanPrimitiveTypeEditor
+          value={value as boolean}
+          onChange={onChange}
+        />
+      );
+    case PRIMITIVE_TYPE.NUMBER:
+    case PRIMITIVE_TYPE.INTEGER:
+    case PRIMITIVE_TYPE.DECIMAL:
+    case PRIMITIVE_TYPE.FLOAT:
+    case PRIMITIVE_TYPE.BINARY:
+    case PRIMITIVE_TYPE.BYTE:
+      return (
         <NumberPrimitiveTypeEditor
-          value={n}
-          onChange={(val: number): void => setN(val)}
+          value={value as number}
+          onChange={onChange}
         />
-      </div>
-      <div>
-        <div>Date</div>
-        <DatePrimitiveTypeEditor
-          value={d}
-          onChange={(val: string): void => setD(val)}
-        />
-      </div>
-      <div>
-        <div>Date Time</div>
+      );
+    case PRIMITIVE_TYPE.STRICTDATE:
+      return (
+        <DatePrimitiveTypeEditor value={value as string} onChange={onChange} />
+      );
+    case PRIMITIVE_TYPE.DATE:
+    case PRIMITIVE_TYPE.DATETIME:
+      return (
         <DateTimePrimitiveTypeEditor
-          value={t}
-          onChange={(val: string): void => setT(val)}
+          value={value as string}
+          onChange={onChange}
         />
-      </div>
-    </div>
-  );
+      );
+    default:
+      return null;
+  }
 };

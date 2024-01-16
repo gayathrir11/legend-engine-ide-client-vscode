@@ -47,3 +47,20 @@ export const usingModelSchema = <T>(schema: ModelSchema<T>): PropSchema =>
     (value) => (value === undefined ? SKIP : serialize(schema, value)),
     (value) => deserialize(schema, value),
   );
+
+// NOTE: we need these methods because `map()` of `serializr` tries to smartly
+// determines if it should produce object or ES6 Map but we always want ES6 Map,
+// so we would use this function
+export const deserializeMap = <T>(
+  val: Record<string, T extends object ? PlainObject<T> : T>,
+  itemDeserializer: (val: T extends object ? PlainObject<T> : T) => T,
+): Map<string, T> => {
+  const result = new Map<string, T>();
+  Object.keys(val).forEach((key: string) =>
+    result.set(
+      key,
+      itemDeserializer(val[key] as T extends object ? PlainObject<T> : T),
+    ),
+  );
+  return result;
+};

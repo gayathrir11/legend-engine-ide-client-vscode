@@ -48,8 +48,7 @@ import {
 } from './results/ExecutionResultHelper';
 import { error } from 'console';
 import { isPlainObject } from './utils/AssertionUtils';
-import { Variable } from './model/VariableExpression';
-import ReactDOM = require('react-dom');
+import type { Variable } from './model/VariableExpression';
 
 let client: LanguageClient;
 
@@ -122,14 +121,15 @@ export function registerComamnds(context: ExtensionContext): void {
             enableScripts: true,
           },
         );
-        const webviewHtmlPath = Uri.file(
-          path.join(context.extensionPath, 'src', 'index.html'),
-        );
         const webviewScriptPath = Uri.file(
-          path.join(context.extensionPath, 'lib', 'webview.js'),
+          path.join(
+            context.extensionPath,
+            'lib',
+            'components',
+            'ParametersEditorRenderer.js',
+          ),
         );
 
-        const webviewHtml = userInput.webview.asWebviewUri(webviewHtmlPath);
         const webviewScript = userInput.webview.asWebviewUri(webviewScriptPath);
 
         userInput.webview.html = `<!-- webview/index.html -->
@@ -141,11 +141,18 @@ export function registerComamnds(context: ExtensionContext): void {
           <title>React Webview</title>
         </head>
         <body>
-          <div id="root"></div>
+          <div id="root" data-input-parameters=${JSON.stringify(args)}></div>
           <script src=${webviewScript}></script>
         </body>
         </html>
         `;
+        const myFunction = (message: string): void => {
+          console.log(message);
+        };
+        userInput.webview.postMessage({
+          command: 'setFunctionProp',
+          propFunction: myFunction.toString(),
+        });
       }
     },
   );
